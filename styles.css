@@ -421,6 +421,12 @@ body {
     font-size: 0.9rem;
 }
 
+.profile-info p#userUsername {
+    color: #ffd700;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
 /* Profile Stats */
 .profile-stats {
     display: grid;
@@ -695,6 +701,10 @@ body {
 
 .activity-amount.negative {
     color: #ff4757;
+}
+
+.activity-amount.pending {
+    color: #ffa502;
 }
 
 /* Contacts */

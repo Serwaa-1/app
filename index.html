@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,7 +26,96 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
+    <!-- Authentication Screens -->
+    <div class="auth-container" id="authContainer">
+        <!-- Login Screen -->
+        <div class="auth-screen" id="loginScreen">
+            <div class="auth-content">
+                <div class="auth-header">
+                    <div class="logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>Torrent Pay</span>
+                    </div>
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to your account</p>
+                </div>
+                
+                <form class="auth-form" id="loginForm">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#" class="forgot-password">Forgot password?</a>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Sign In</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="#" onclick="showSignup()">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Screen -->
+        <div class="auth-screen" id="signupScreen" style="display: none;">
+            <div class="auth-content">
+                <div class="auth-header">
+                    <div class="logo">
+                        <i class="fas fa-bolt"></i>
+                        <span>Torrent Pay</span>
+                    </div>
+                    <h2>Create Account</h2>
+                    <p>Join Torrent Pay today</p>
+                </div>
+                
+                <form class="auth-form" id="signupForm">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="Enter your phone number" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <div class="form-options">
+                        <label class="checkbox">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span>I agree to the <a href="#">Terms & Conditions</a></span>
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-primary full-width">Create Account</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="#" onclick="showLogin()">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="appContainer" style="display: none;">
         <!-- Header -->
         <header class="header">
             <div class="header-content">
@@ -34,11 +124,11 @@
                     <span>Torrent Pay</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-secondary">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <button class="btn-secondary">
+                    <button class="btn-secondary" onclick="showNotifications()">
                         <i class="fas fa-bell"></i>
+                    </button>
+                    <button class="btn-secondary" onclick="showSettings()">
+                        <i class="fas fa-cog"></i>
                     </button>
                 </div>
             </div>
@@ -46,99 +136,209 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Balance Section -->
-            <section class="balance-section">
-                <div class="balance-card">
-                    <div class="balance-info">
-                        <h2>Your Balance</h2>
-                        <div class="balance-amount">$2,847.50</div>
-                        <div class="balance-change positive">
-                            <i class="fas fa-arrow-up"></i>
-                            +$125.00 this week
+            <!-- Home Tab -->
+            <div class="tab-content active" id="homeTab">
+                <!-- Balance Section -->
+                <section class="balance-section">
+                    <div class="balance-card">
+                        <div class="balance-info">
+                            <h2>Your Balance</h2>
+                            <div class="balance-amount">$2,847.50</div>
+                            <div class="balance-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +$125.00 this week
+                            </div>
+                        </div>
+                        <div class="balance-actions">
+                            <button class="btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Add Money
+                            </button>
+                            <button class="btn-secondary" onclick="showSendMoney()">
+                                <i class="fas fa-arrow-right"></i>
+                                Send
+                            </button>
                         </div>
                     </div>
-                    <div class="balance-actions">
-                        <button class="btn-primary">
-                            <i class="fas fa-plus"></i>
-                            Add Money
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <div class="action-item" onclick="showSendMoney()">
+                            <div class="action-icon send">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <span>Send</span>
+                        </div>
+                        <div class="action-item" onclick="showRequestMoney()">
+                            <div class="action-icon request">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <span>Request</span>
+                        </div>
+                        <div class="action-item" onclick="showInvest()">
+                            <div class="action-icon invest">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span>Invest</span>
+                        </div>
+                        <div class="action-item" onclick="showCards()">
+                            <div class="action-icon card">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <span>Cards</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Activity -->
+                <section class="recent-activity">
+                    <div class="section-header">
+                        <h3>Recent Activity</h3>
+                        <button class="btn-text" onclick="showAllActivity()">See All</button>
+                    </div>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activity items will be populated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Contacts -->
+                <section class="contacts-section">
+                    <div class="section-header">
+                        <h3>Frequent Contacts</h3>
+                        <button class="btn-text" onclick="showAllContacts()">View All</button>
+                    </div>
+                    <div class="contacts-list" id="contactsList">
+                        <!-- Contact items will be populated by JavaScript -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Activity Tab -->
+            <div class="tab-content" id="activityTab">
+                <div class="tab-header">
+                    <h2>Activity</h2>
+                    <div class="filter-options">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="sent">Sent</button>
+                        <button class="filter-btn" data-filter="received">Received</button>
+                        <button class="filter-btn" data-filter="pending">Pending</button>
+                    </div>
+                </div>
+                
+                <div class="activity-feed" id="activityFeed">
+                    <!-- Full activity list will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Contacts Tab -->
+            <div class="tab-content" id="contactsTab">
+                <div class="tab-header">
+                    <h2>Contacts</h2>
+                    <button class="btn-primary" onclick="showAddContact()">
+                        <i class="fas fa-plus"></i>
+                        Add Contact
+                    </button>
+                </div>
+                
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search contacts..." id="contactSearch">
+                </div>
+                
+                <div class="contacts-grid" id="contactsGrid">
+                    <!-- Full contacts list will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div class="tab-content" id="profileTab">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iNTAiIGZpbGw9IiNmZmQ3MDAiLz4KPHN2ZyB4PSIyNSIgeT0iMjUiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjMDAwIj4KPHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPgo8L3N2Zz4KPC9zdmc+Cg==" alt="Profile" id="profileImage">
+                        <button class="edit-avatar" onclick="editProfileImage()">
+                            <i class="fas fa-camera"></i>
                         </button>
-                        <button class="btn-secondary">
-                            <i class="fas fa-arrow-right"></i>
-                            Send
-                        </button>
+                    </div>
+                    <div class="profile-info">
+                        <h2 id="userName">Alex Johnson</h2>
+                        <p id="userEmail">alex@torrentpay.com</p>
+                        <p id="userPhone">+1 (555) 123-4567</p>
                     </div>
                 </div>
-            </section>
 
-            <!-- Quick Actions -->
-            <section class="quick-actions">
-                <h3>Quick Actions</h3>
-                <div class="action-grid">
-                    <div class="action-item" onclick="showSendMoney()">
-                        <div class="action-icon send">
-                            <i class="fas fa-paper-plane"></i>
-                        </div>
-                        <span>Send</span>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">$2,847.50</div>
+                        <div class="stat-label">Total Balance</div>
                     </div>
-                    <div class="action-item" onclick="showRequestMoney()">
-                        <div class="action-icon request">
-                            <i class="fas fa-hand-holding-usd"></i>
-                        </div>
-                        <span>Request</span>
+                    <div class="stat-item">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">Transactions</div>
                     </div>
-                    <div class="action-item" onclick="showInvest()">
-                        <div class="action-icon invest">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <span>Invest</span>
-                    </div>
-                    <div class="action-item" onclick="showCards()">
-                        <div class="action-icon card">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <span>Cards</span>
+                    <div class="stat-item">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Contacts</div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Recent Activity -->
-            <section class="recent-activity">
-                <div class="section-header">
-                    <h3>Recent Activity</h3>
-                    <button class="btn-text">See All</button>
+                <div class="profile-menu">
+                    <div class="menu-item" onclick="showPersonalInfo()">
+                        <i class="fas fa-user"></i>
+                        <span>Personal Information</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="menu-item" onclick="showSecurity()">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Security & Privacy</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="menu-item" onclick="showPaymentMethods()">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payment Methods</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="menu-item" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="menu-item" onclick="showHelp()">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help & Support</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="menu-item" onclick="showAbout()">
+                        <i class="fas fa-info-circle"></i>
+                        <span>About Torrent Pay</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                    <div class="menu-item logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Sign Out</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
                 </div>
-                <div class="activity-list" id="activityList">
-                    <!-- Activity items will be populated by JavaScript -->
-                </div>
-            </section>
-
-            <!-- Contacts -->
-            <section class="contacts-section">
-                <div class="section-header">
-                    <h3>Frequent Contacts</h3>
-                    <button class="btn-text">View All</button>
-                </div>
-                <div class="contacts-list" id="contactsList">
-                    <!-- Contact items will be populated by JavaScript -->
-                </div>
-            </section>
+            </div>
         </main>
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <div class="nav-item active">
+            <div class="nav-item active" data-tab="homeTab">
                 <i class="fas fa-home"></i>
                 <span>Home</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="activityTab">
                 <i class="fas fa-search"></i>
                 <span>Activity</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="contactsTab">
                 <i class="fas fa-users"></i>
                 <span>Contacts</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="profileTab">
                 <i class="fas fa-user"></i>
                 <span>Profile</span>
             </div>
@@ -271,6 +471,35 @@
                     <button class="btn-primary full-width">
                         <i class="fas fa-plus"></i>
                         Add New Card
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Contact Modal -->
+        <div class="modal" id="addContactModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add Contact</h3>
+                    <button class="close-btn" onclick="closeModal('addContactModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" placeholder="Enter full name" id="contactNameInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="Enter email address" id="contactEmailInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="Enter phone number" id="contactPhoneInput">
+                    </div>
+                    <button class="btn-primary full-width" onclick="addContact()">
+                        Add Contact
                     </button>
                 </div>
             </div>

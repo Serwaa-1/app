@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .tab-content { display: none; padding: 20px; border: 1px solid #ccc; }
+        .tab-content.active { display: block; }
+        .nav-item { padding: 10px; margin: 5px; background: #f0f0f0; cursor: pointer; }
+        .nav-item.active { background: #ffd700; }
+        .debug { background: #f9f9f9; padding: 10px; margin: 10px 0; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <h1>Tab Navigation Test</h1>
+    
+    <div class="debug" id="debug">
+        <strong>Debug Info:</strong> <span id="debugText">Ready</span>
+    </div>
+
+    <nav>
+        <div class="nav-item active" data-tab="homeTab">Home</div>
+        <div class="nav-item" data-tab="activityTab">Activity</div>
+        <div class="nav-item" data-tab="contactsTab">Contacts</div>
+        <div class="nav-item" data-tab="profileTab">Profile</div>
+    </nav>
+
+    <div class="tab-content active" id="homeTab">
+        <h2>Home Tab</h2>
+        <p>This is the home tab content.</p>
+    </div>
+
+    <div class="tab-content" id="activityTab">
+        <h2>Activity Tab</h2>
+        <p>This is the activity tab content.</p>
+        <div class="filter-options">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="sent">Sent</button>
+            <button class="filter-btn" data-filter="received">Received</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+        </div>
+    </div>
+
+    <div class="tab-content" id="contactsTab">
+        <h2>Contacts Tab</h2>
+        <p>This is the contacts tab content.</p>
+        <input type="text" placeholder="Search contacts..." id="contactSearch">
+    </div>
+
+    <div class="tab-content" id="profileTab">
+        <h2>Profile Tab</h2>
+        <p>This is the profile tab content.</p>
+    </div>
+
+    <script>
+        // Simple tab switching function
+        function switchTab(tabId) {
+            console.log('Switching to tab:', tabId);
+            document.getElementById('debugText').textContent = `Switched to: ${tabId}`;
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const activeNav = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.add('active');
+                console.log('Tab activated:', tabId);
+            } else {
+                console.error('Tab not found:', tabId);
+            }
+        }
+
+        // Setup event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            console.log('Setting up tab navigation for', navItems.length, 'items');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    console.log('Tab clicked:', tabId);
+                    switchTab(tabId);
+                });
+            });
+
+            // Filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
+                    console.log('Filter clicked:', filter);
+                    document.getElementById('debugText').textContent = `Filter: ${filter}`;
+                });
+            });
+
+            // Contact search
+            const contactSearch = document.getElementById('contactSearch');
+            if (contactSearch) {
+                contactSearch.addEventListener('input', function() {
+                    console.log('Search:', this.value);
+                    document.getElementById('debugText').textContent = `Search: ${this.value}`;
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

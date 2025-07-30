@@ -1,0 +1,283 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torrent Pay - Send Money Instantly</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Torrent Pay">
+    <meta name="description" content="Send money instantly with Torrent Pay">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMjAiIGZpbGw9IiMwMDAwMDAiLz4KPHN2ZyB4PSI0NSIgeT0iNDUiIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSIjZmZkNzAwIj4KPHBhdGggZD0iTTEzIDJMMTMgMTJMMTcgMTJMMTcgMk0xMyAyMkwxMyAxNkwxNyAxNkwxNyAyMk0xMyAxMkwxMyAxNkwxNyAxNkwxNyAxMk0xMyA2TDEzIDEwTDE3IDEwTDE3IDZNMjIgN0wyMiAxN0wyMCAxN0wyMCA3TTQgN0w0IDE3TDIgMTdMMiA3Ii8+Cjwvc3ZnPgo8L3N2Zz4K">
+    
+    <!-- Splash Screen for iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-bolt"></i>
+                    <span>Torrent Pay</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-secondary">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="btn-secondary">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Balance Section -->
+            <section class="balance-section">
+                <div class="balance-card">
+                    <div class="balance-info">
+                        <h2>Your Balance</h2>
+                        <div class="balance-amount">$2,847.50</div>
+                        <div class="balance-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +$125.00 this week
+                        </div>
+                    </div>
+                    <div class="balance-actions">
+                        <button class="btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add Money
+                        </button>
+                        <button class="btn-secondary">
+                            <i class="fas fa-arrow-right"></i>
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="action-grid">
+                    <div class="action-item" onclick="showSendMoney()">
+                        <div class="action-icon send">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <span>Send</span>
+                    </div>
+                    <div class="action-item" onclick="showRequestMoney()">
+                        <div class="action-icon request">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <span>Request</span>
+                    </div>
+                    <div class="action-item" onclick="showInvest()">
+                        <div class="action-icon invest">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <span>Invest</span>
+                    </div>
+                    <div class="action-item" onclick="showCards()">
+                        <div class="action-icon card">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <span>Cards</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="recent-activity">
+                <div class="section-header">
+                    <h3>Recent Activity</h3>
+                    <button class="btn-text">See All</button>
+                </div>
+                <div class="activity-list" id="activityList">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Contacts -->
+            <section class="contacts-section">
+                <div class="section-header">
+                    <h3>Frequent Contacts</h3>
+                    <button class="btn-text">View All</button>
+                </div>
+                <div class="contacts-list" id="contactsList">
+                    <!-- Contact items will be populated by JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-search"></i>
+                <span>Activity</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Contacts</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </div>
+        </nav>
+
+        <!-- Send Money Modal -->
+        <div class="modal" id="sendMoneyModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Send Money</h3>
+                    <button class="close-btn" onclick="closeModal('sendMoneyModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label>To</label>
+                        <input type="text" placeholder="Name, email, or phone" id="recipientInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Amount</label>
+                        <input type="number" placeholder="0.00" id="amountInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Note (optional)</label>
+                        <input type="text" placeholder="What's it for?" id="noteInput">
+                    </div>
+                    <button class="btn-primary full-width" onclick="sendMoney()">
+                        Send $<span id="sendAmount">0.00</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request Money Modal -->
+        <div class="modal" id="requestMoneyModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Request Money</h3>
+                    <button class="close-btn" onclick="closeModal('requestMoneyModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label>From</label>
+                        <input type="text" placeholder="Name, email, or phone" id="requestFromInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Amount</label>
+                        <input type="number" placeholder="0.00" id="requestAmountInput">
+                    </div>
+                    <div class="input-group">
+                        <label>Note (optional)</label>
+                        <input type="text" placeholder="What's it for?" id="requestNoteInput">
+                    </div>
+                    <button class="btn-primary full-width" onclick="requestMoney()">
+                        Request $<span id="requestAmount">0.00</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invest Modal -->
+        <div class="modal" id="investModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Invest</h3>
+                    <button class="close-btn" onclick="closeModal('investModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="investment-options">
+                        <div class="investment-option">
+                            <div class="option-icon">
+                                <i class="fas fa-bitcoin"></i>
+                            </div>
+                            <div class="option-info">
+                                <h4>Bitcoin</h4>
+                                <p>+12.5% this month</p>
+                            </div>
+                            <button class="btn-secondary">Buy</button>
+                        </div>
+                        <div class="investment-option">
+                            <div class="option-icon">
+                                <i class="fas fa-ethereum"></i>
+                            </div>
+                            <div class="option-info">
+                                <h4>Ethereum</h4>
+                                <p>+8.3% this month</p>
+                            </div>
+                            <button class="btn-secondary">Buy</button>
+                        </div>
+                        <div class="investment-option">
+                            <div class="option-icon">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="option-info">
+                                <h4>Stocks</h4>
+                                <p>+5.2% this month</p>
+                            </div>
+                            <button class="btn-secondary">Buy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Modal -->
+        <div class="modal" id="cardsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Your Cards</h3>
+                    <button class="close-btn" onclick="closeModal('cardsModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-item">
+                        <div class="card-info">
+                            <h4>Torrent Pay Card</h4>
+                            <p>**** **** **** 1234</p>
+                            <p>Expires 12/25</p>
+                        </div>
+                        <div class="card-balance">
+                            <span>$1,250.00</span>
+                        </div>
+                    </div>
+                    <button class="btn-primary full-width">
+                        <i class="fas fa-plus"></i>
+                        Add New Card
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

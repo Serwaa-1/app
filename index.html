@@ -42,8 +42,8 @@
                 
                 <form class="auth-form" id="loginForm">
                     <div class="input-group">
-                        <label>Email</label>
-                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        <label>Username or Email</label>
+                        <input type="text" id="loginUsername" placeholder="Enter your username or email" required>
                     </div>
                     <div class="input-group">
                         <label>Password</label>
@@ -78,6 +78,10 @@
                 </div>
                 
                 <form class="auth-form" id="signupForm">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="signupUsername" placeholder="Choose a username" required>
+                    </div>
                     <div class="input-group">
                         <label>Full Name</label>
                         <input type="text" id="signupName" placeholder="Enter your full name" required>
@@ -264,6 +268,7 @@
                     </div>
                     <div class="profile-info">
                         <h2 id="userName">Alex Johnson</h2>
+                        <p id="userUsername">@alexj</p>
                         <p id="userEmail">alex@torrentpay.com</p>
                         <p id="userPhone">+1 (555) 123-4567</p>
                     </div>

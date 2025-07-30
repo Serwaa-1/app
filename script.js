@@ -9,12 +9,14 @@ const dummyData = {
     // Dummy users for authentication
     users: [
         {
+            username: "alexj",
             email: "alex@torrentpay.com",
             password: "password123",
             name: "Alex Johnson",
             phone: "+1 (555) 123-4567"
         },
         {
+            username: "demouser",
             email: "demo@torrentpay.com",
             password: "demo123",
             name: "Demo User",
@@ -66,6 +68,42 @@ const dummyData = {
             note: "Lunch",
             time: "1 week ago",
             avatar: "LG"
+        },
+        {
+            id: 6,
+            type: "received",
+            name: "John Smith",
+            amount: 200.00,
+            note: "Freelance payment",
+            time: "1 week ago",
+            avatar: "JS"
+        },
+        {
+            id: 7,
+            type: "sent",
+            name: "Maria Rodriguez",
+            amount: 75.00,
+            note: "Birthday gift 🎁",
+            time: "2 weeks ago",
+            avatar: "MR"
+        },
+        {
+            id: 8,
+            type: "received",
+            name: "Tom Anderson",
+            amount: 50.00,
+            note: "Gas money",
+            time: "2 weeks ago",
+            avatar: "TA"
+        },
+        {
+            id: 9,
+            type: "pending",
+            name: "Alex Johnson",
+            amount: 30.00,
+            note: "Pending request",
+            time: "3 weeks ago",
+            avatar: "AJ"
         }
     ],
     contacts: [
@@ -92,6 +130,7 @@ let currentActivities = [...dummyData.activities];
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing app...');
     checkAuthStatus();
     setupEventListeners();
     registerServiceWorker();
@@ -116,6 +155,10 @@ function showApp() {
     document.getElementById('authContainer').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
     initializeApp();
+    // Setup tab navigation after app is shown
+    setTimeout(() => {
+        setupTabNavigation();
+    }, 100);
 }
 
 function showLogin() {
@@ -128,28 +171,39 @@ function showSignup() {
     document.getElementById('signupScreen').style.display = 'block';
 }
 
-function login(email, password) {
-    const user = dummyData.users.find(u => u.email === email && u.password === password);
+function login(usernameOrEmail, password) {
+    const user = dummyData.users.find(u => 
+        (u.username === usernameOrEmail || u.email === usernameOrEmail) && 
+        u.password === password
+    );
     if (user) {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('currentUser', JSON.stringify(user));
         showApp();
         showNotification('Welcome back, ' + user.name + '!', 'success');
     } else {
-        showNotification('Invalid email or password', 'error');
+        showNotification('Invalid username/email or password', 'error');
     }
 }
 
 function signup(userData) {
-    // Check if user already exists
-    const existingUser = dummyData.users.find(u => u.email === userData.email);
-    if (existingUser) {
-        showNotification('User already exists with this email', 'error');
+    // Check if username already exists
+    const existingUsername = dummyData.users.find(u => u.username === userData.username);
+    if (existingUsername) {
+        showNotification('Username already taken', 'error');
+        return;
+    }
+
+    // Check if email already exists
+    const existingEmail = dummyData.users.find(u => u.email === userData.email);
+    if (existingEmail) {
+        showNotification('Email already registered', 'error');
         return;
     }
 
     // Add new user
     const newUser = {
+        username: userData.username,
         email: userData.email,
         password: userData.password,
         name: userData.name,
@@ -197,13 +251,24 @@ function initializeApp() {
 
 // Tab Navigation
 function switchTab(tabId) {
+    console.log('Switching to tab:', tabId);
+    
     // Update navigation
     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    const activeNav = document.querySelector(`[data-tab="${tabId}"]`);
+    if (activeNav) {
+        activeNav.classList.add('active');
+    }
     
     // Update tab content
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
+    const activeTab = document.getElementById(tabId);
+    if (activeTab) {
+        activeTab.classList.add('active');
+        console.log('Tab activated:', tabId);
+    } else {
+        console.error('Tab not found:', tabId);
+    }
 }
 
 // Update user information
@@ -211,6 +276,7 @@ function updateUserInfo() {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (currentUser) {
         document.getElementById('userName').textContent = currentUser.name;
+        document.getElementById('userUsername').textContent = '@' + (currentUser.username || 'user');
         document.getElementById('userEmail').textContent = currentUser.email;
         document.getElementById('userPhone').textContent = currentUser.phone;
     }
@@ -226,6 +292,7 @@ function populateActivityFeed() {
         const activityItem = createActivityItem(activity);
         activityFeed.appendChild(activityItem);
     });
+    console.log('Activity feed populated with', currentActivities.length, 'activities');
 }
 
 function filterActivities(filter) {
@@ -257,6 +324,7 @@ function populateContactsGrid() {
         const contactCard = createContactCard(contact);
         contactsGrid.appendChild(contactCard);
     });
+    console.log('Contacts grid populated with', dummyData.contacts.length, 'contacts');
 }
 
 function createContactCard(contact) {
@@ -366,52 +434,46 @@ function showSettings() {
 
 function setupEventListeners() {
     // Authentication form listeners
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        login(email, password);
-    });
-
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const phone = document.getElementById('signupPhone').value;
-        const password = document.getElementById('signupPassword').value;
-        const confirmPassword = document.getElementById('signupConfirmPassword').value;
-
-        if (password !== confirmPassword) {
-            showNotification('Passwords do not match', 'error');
-            return;
-        }
-
-        signup({ name, email, phone, password });
-    });
-
-    // Tab navigation
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
-            switchTab(tabId);
-        });
-    });
-
-    // Filter buttons
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const filter = this.getAttribute('data-filter');
-            filterActivities(filter);
-        });
-    });
-
-    // Contact search
-    const contactSearch = document.getElementById('contactSearch');
-    if (contactSearch) {
-        contactSearch.addEventListener('input', function() {
-            searchContacts(this.value);
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usernameOrEmail = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            login(usernameOrEmail, password);
         });
     }
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const phone = document.getElementById('signupPhone').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            signup({ username, name, email, phone, password });
+        });
+    }
+
+    // Tab navigation - Set up after app is shown
+    setTimeout(() => {
+        setupTabNavigation();
+    }, 100);
 
     // Close modals when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
@@ -430,6 +492,38 @@ function setupEventListeners() {
     });
 }
 
+// Setup tab navigation separately
+function setupTabNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    console.log('Setting up tab navigation for', navItems.length, 'items');
+    
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tabId = this.getAttribute('data-tab');
+            console.log('Tab clicked:', tabId);
+            switchTab(tabId);
+        });
+    });
+
+    // Filter buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            filterActivities(filter);
+        });
+    });
+
+    // Contact search
+    const contactSearch = document.getElementById('contactSearch');
+    if (contactSearch) {
+        contactSearch.addEventListener('input', function() {
+            searchContacts(this.value);
+        });
+    }
+}
+
 // Activity Functions
 function populateActivities() {
     const activityList = document.getElementById('activityList');
@@ -445,9 +539,18 @@ function createActivityItem(activity) {
     const item = document.createElement('div');
     item.className = 'activity-item';
     
-    const isPositive = activity.type === 'received';
-    const amountClass = isPositive ? 'positive' : 'negative';
-    const amountPrefix = isPositive ? '+' : '-';
+    let amountClass = 'negative';
+    let amountPrefix = '-';
+    let amountText = `$${activity.amount.toFixed(2)}`;
+    
+    if (activity.type === 'received') {
+        amountClass = 'positive';
+        amountPrefix = '+';
+    } else if (activity.type === 'pending') {
+        amountClass = 'pending';
+        amountPrefix = '';
+        amountText = `$${activity.amount.toFixed(2)} (Pending)`;
+    }
     
     item.innerHTML = `
         <div class="activity-avatar">${activity.avatar}</div>
@@ -456,7 +559,7 @@ function createActivityItem(activity) {
             <div class="activity-details">${activity.note} • ${activity.time}</div>
         </div>
         <div class="activity-amount ${amountClass}">
-            ${amountPrefix}$${activity.amount.toFixed(2)}
+            ${amountPrefix}${amountText}
         </div>
     `;
     

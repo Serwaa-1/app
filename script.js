@@ -6,6 +6,21 @@ const dummyData = {
         email: "alex@torrentpay.com",
         phone: "+1 (555) 123-4567"
     },
+    // Dummy users for authentication
+    users: [
+        {
+            email: "alex@torrentpay.com",
+            password: "password123",
+            name: "Alex Johnson",
+            phone: "+1 (555) 123-4567"
+        },
+        {
+            email: "demo@torrentpay.com",
+            password: "demo123",
+            name: "Demo User",
+            phone: "+1 (555) 999-8888"
+        }
+    ],
     activities: [
         {
             id: 1,
@@ -77,10 +92,83 @@ let currentActivities = [...dummyData.activities];
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', function() {
-    initializeApp();
+    checkAuthStatus();
     setupEventListeners();
     registerServiceWorker();
 });
+
+// Authentication Functions
+function checkAuthStatus() {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn === 'true') {
+        showApp();
+    } else {
+        showAuth();
+    }
+}
+
+function showAuth() {
+    document.getElementById('authContainer').style.display = 'flex';
+    document.getElementById('appContainer').style.display = 'none';
+}
+
+function showApp() {
+    document.getElementById('authContainer').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    initializeApp();
+}
+
+function showLogin() {
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('signupScreen').style.display = 'none';
+}
+
+function showSignup() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('signupScreen').style.display = 'block';
+}
+
+function login(email, password) {
+    const user = dummyData.users.find(u => u.email === email && u.password === password);
+    if (user) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        showApp();
+        showNotification('Welcome back, ' + user.name + '!', 'success');
+    } else {
+        showNotification('Invalid email or password', 'error');
+    }
+}
+
+function signup(userData) {
+    // Check if user already exists
+    const existingUser = dummyData.users.find(u => u.email === userData.email);
+    if (existingUser) {
+        showNotification('User already exists with this email', 'error');
+        return;
+    }
+
+    // Add new user
+    const newUser = {
+        email: userData.email,
+        password: userData.password,
+        name: userData.name,
+        phone: userData.phone
+    };
+    
+    dummyData.users.push(newUser);
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('currentUser', JSON.stringify(newUser));
+    showApp();
+    showNotification('Account created successfully!', 'success');
+}
+
+function logout() {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('currentUser');
+    showAuth();
+    showNotification('You have been signed out', 'info');
+}
 
 // Register Service Worker for PWA
 function registerServiceWorker() {
@@ -100,18 +188,230 @@ function registerServiceWorker() {
 function initializeApp() {
     populateActivities();
     populateContacts();
+    populateActivityFeed();
+    populateContactsGrid();
     updateBalance();
+    updateUserInfo();
     setupAmountInputs();
 }
 
+// Tab Navigation
+function switchTab(tabId) {
+    // Update navigation
+    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+    
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+}
+
+// Update user information
+function updateUserInfo() {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (currentUser) {
+        document.getElementById('userName').textContent = currentUser.name;
+        document.getElementById('userEmail').textContent = currentUser.email;
+        document.getElementById('userPhone').textContent = currentUser.phone;
+    }
+}
+
+// Activity Feed Functions
+function populateActivityFeed() {
+    const activityFeed = document.getElementById('activityFeed');
+    if (!activityFeed) return;
+    
+    activityFeed.innerHTML = '';
+    currentActivities.forEach(activity => {
+        const activityItem = createActivityItem(activity);
+        activityFeed.appendChild(activityItem);
+    });
+}
+
+function filterActivities(filter) {
+    // Update filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+    
+    const activityFeed = document.getElementById('activityFeed');
+    activityFeed.innerHTML = '';
+    
+    let filteredActivities = currentActivities;
+    if (filter !== 'all') {
+        filteredActivities = currentActivities.filter(activity => activity.type === filter);
+    }
+    
+    filteredActivities.forEach(activity => {
+        const activityItem = createActivityItem(activity);
+        activityFeed.appendChild(activityItem);
+    });
+}
+
+// Contacts Grid Functions
+function populateContactsGrid() {
+    const contactsGrid = document.getElementById('contactsGrid');
+    if (!contactsGrid) return;
+    
+    contactsGrid.innerHTML = '';
+    dummyData.contacts.forEach(contact => {
+        const contactCard = createContactCard(contact);
+        contactsGrid.appendChild(contactCard);
+    });
+}
+
+function createContactCard(contact) {
+    const card = document.createElement('div');
+    card.className = 'contact-card';
+    card.onclick = () => selectContact(contact);
+    
+    card.innerHTML = `
+        <div class="contact-card-avatar">${contact.avatar}</div>
+        <div class="contact-card-name">${contact.name}</div>
+        <div class="contact-card-email">${contact.phone}</div>
+    `;
+    
+    return card;
+}
+
+function searchContacts(query) {
+    const contactsGrid = document.getElementById('contactsGrid');
+    contactsGrid.innerHTML = '';
+    
+    const filteredContacts = dummyData.contacts.filter(contact => 
+        contact.name.toLowerCase().includes(query.toLowerCase()) ||
+        contact.phone.includes(query)
+    );
+    
+    filteredContacts.forEach(contact => {
+        const contactCard = createContactCard(contact);
+        contactsGrid.appendChild(contactCard);
+    });
+}
+
+// Additional Functions
+function showAllActivity() {
+    switchTab('activityTab');
+}
+
+function showAllContacts() {
+    switchTab('contactsTab');
+}
+
+function showAddContact() {
+    const modal = document.getElementById('addContactModal');
+    modal.classList.add('active');
+}
+
+function addContact() {
+    const name = document.getElementById('contactNameInput').value;
+    const email = document.getElementById('contactEmailInput').value;
+    const phone = document.getElementById('contactPhoneInput').value;
+    
+    if (!name || !email || !phone) {
+        showNotification('Please fill in all fields', 'error');
+        return;
+    }
+    
+    const newContact = {
+        id: Date.now(),
+        name: name,
+        avatar: getInitials(name),
+        phone: phone,
+        email: email
+    };
+    
+    dummyData.contacts.push(newContact);
+    populateContactsGrid();
+    closeModal('addContactModal');
+    showNotification('Contact added successfully!', 'success');
+    
+    // Clear form
+    document.getElementById('contactNameInput').value = '';
+    document.getElementById('contactEmailInput').value = '';
+    document.getElementById('contactPhoneInput').value = '';
+}
+
+// Profile Functions
+function editProfileImage() {
+    showNotification('Profile image editing coming soon!', 'info');
+}
+
+function showPersonalInfo() {
+    showNotification('Personal information settings coming soon!', 'info');
+}
+
+function showSecurity() {
+    showNotification('Security settings coming soon!', 'info');
+}
+
+function showPaymentMethods() {
+    showNotification('Payment methods coming soon!', 'info');
+}
+
+function showNotifications() {
+    showNotification('Notification settings coming soon!', 'info');
+}
+
+function showHelp() {
+    showNotification('Help & support coming soon!', 'info');
+}
+
+function showAbout() {
+    showNotification('About Torrent Pay coming soon!', 'info');
+}
+
+function showSettings() {
+    showNotification('Settings coming soon!', 'info');
+}
+
 function setupEventListeners() {
-    // Bottom navigation
+    // Authentication form listeners
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        login(email, password);
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('signupName').value;
+        const email = document.getElementById('signupEmail').value;
+        const phone = document.getElementById('signupPhone').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+        if (password !== confirmPassword) {
+            showNotification('Passwords do not match', 'error');
+            return;
+        }
+
+        signup({ name, email, phone, password });
+    });
+
+    // Tab navigation
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
+            const tabId = this.getAttribute('data-tab');
+            switchTab(tabId);
         });
     });
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filter = this.getAttribute('data-filter');
+            filterActivities(filter);
+        });
+    });
+
+    // Contact search
+    const contactSearch = document.getElementById('contactSearch');
+    if (contactSearch) {
+        contactSearch.addEventListener('input', function() {
+            searchContacts(this.value);
+        });
+    }
 
     // Close modals when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
@@ -535,4 +835,20 @@ window.showInvest = showInvest;
 window.showCards = showCards;
 window.closeModal = closeModal;
 window.sendMoney = sendMoney;
+window.requestMoney = requestMoney;
+window.showLogin = showLogin;
+window.showSignup = showSignup;
+window.logout = logout;
+window.showAllActivity = showAllActivity;
+window.showAllContacts = showAllContacts;
+window.showAddContact = showAddContact;
+window.addContact = addContact;
+window.editProfileImage = editProfileImage;
+window.showPersonalInfo = showPersonalInfo;
+window.showSecurity = showSecurity;
+window.showPaymentMethods = showPaymentMethods;
+window.showNotifications = showNotifications;
+window.showHelp = showHelp;
+window.showAbout = showAbout;
+window.showSettings = showSettings; 
 window.requestMoney = requestMoney; 
